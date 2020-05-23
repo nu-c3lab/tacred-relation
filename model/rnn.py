@@ -67,6 +67,27 @@ class RelationModel(object):
                     predictions, probs)))]
         return predictions, probs, loss.data.item()
 
+    def predictUnseen(self, batch, unsort=True):
+        """ Run forward prediction. If unsort is True, recover the original order of the batch. """
+        if self.opt['cuda']:
+            inputs = [b.cuda() for b in batch[:7]]
+            labels = batch[7].cuda()
+        else:
+            inputs = [b for b in batch[:7]]
+            labels = batch[7]
+
+        orig_idx = batch[8]
+
+        # forward
+        self.model.eval()
+        logits, _ = self.model(inputs)
+        probs = F.softmax(logits, dim=1).data.cpu().numpy().tolist()
+        predictions = np.argmax(logits.data.cpu().numpy(), axis=1).tolist()
+        if unsort:
+            _, predictions, probs = [list(t) for t in zip(*sorted(zip(orig_idx,\
+                    predictions, probs)))]
+        return predictions, probs
+
     def update_lr(self, new_lr):
         torch_utils.change_lr(self.optimizer, new_lr)
 
