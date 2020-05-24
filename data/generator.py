@@ -21,7 +21,7 @@ text = ("Albert Einstein, (born March 14, 1879, Ulm, Württemberg, Germany—die
     "influential physicist of the 20th century.")
 
 # convert unicode characters to ascii
-#text = unidecode.unidecode(text)
+text = unidecode.unidecode(text)
 
 #text = "Youth minister and \"Street General\" Charles Ble Goude, who is under UN sanctions for \"acts of violence by street militias, including beatings, rapes and extrajudicial killings\", vows to fight for Ivory Coast's sovereignty."
 #text = "Taiwan's Chunghwa Telecom Co plans to spend 129 billion New Taiwan dollars -LRB- US$ 397 billion; euro3 billion -RRB- over the next five years to upgrade its telecommunications networks and build a new undersea cable system, Chairman Ho Chen Tan said Wednesday."
