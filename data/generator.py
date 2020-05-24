@@ -77,7 +77,8 @@ class Generator(object):
                         jsonSentence["obj_end"] = sentence.ents[j].end - 1
                         jsonSentence["subj_type"] = __self__.convertNER(sentence.ents[i].label_)
                         jsonSentence["obj_type"] = __self__.convertNER(sentence.ents[j].label_)
-                        jsonifiedSentences.append(copy.deepcopy(jsonSentence))
+                        if jsonSentence['subj_type'] in ['OBJECT', 'PERSON']:
+                            jsonifiedSentences.append(copy.deepcopy(jsonSentence))
 
         with open(__self__.filename, 'w') as json_file:
             json.dump(jsonifiedSentences, json_file)
