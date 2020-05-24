@@ -62,7 +62,7 @@ for i, b in enumerate(batch):
     all_probs += probs
 relations = ['(' + id2label[predictions[idx]] + ' ' + batch.entities[idx][0] + ' ' + batch.entities[idx][1] + ') ' + str(max(all_probs[idx])) \
                 for idx in range(len(predictions)) \
-                if predictions[idx] != 0 and max(all_probs[idx]) > 0.5]
+                if predictions[idx] != 0 and max(all_probs[idx]) > 0.75]
 #for idx in range(len(relations)):
 
 

@@ -2,6 +2,7 @@ import copy
 import json
 import spacy
 import unidecode
+import wikipedia
 
 # {
 #   "id": "098f6fb926eb676a14fd", "relation": "per:title",
@@ -14,11 +15,16 @@ import unidecode
 # }
 nlp = spacy.load("en_core_web_sm")
 
-text = ("Albert Einstein, (born March 14, 1879, Ulm, Württemberg, Germany—died April 18, 1955, "
-    "Princeton, New Jersey, U.S.), German-born physicist who developed the special and "
-    "general theories of relativity and won the Nobel Prize for Physics in 1921 for his "
-    "explanation of the photoelectric effect. Einstein is generally considered the most "
-    "influential physicist of the 20th century.")
+page = wikipedia.page("Albert Einstein")
+
+#text = ("Albert Einstein, (born March 14, 1879, Ulm, Württemberg, Germany—died April 18, 1955, "
+#    "Princeton, New Jersey, U.S.), German-born physicist who developed the special and "
+#    "general theories of relativity and won the Nobel Prize for Physics in 1921 for his "
+#    "explanation of the photoelectric effect. Einstein is generally considered the most "
+#    "influential physicist of the 20th century.")
+
+text = page.content.split('== References ==')[0]
+print(page.title)
 
 # convert unicode characters to ascii
 text = unidecode.unidecode(text)
@@ -71,7 +77,8 @@ class Generator(object):
             for i in range(len(sentence.ents)):
                 for j in range(len(sentence.ents)):
                     # prevent self relations and relations where the subject is not an organization or person
-                    if i != j and __self__.convertNER(sentence.ents[i].label_) in ['ORGANIZATION', 'PERSON']:
+                    entity_variations = [page.title, *page.title.split()]
+                    if i != j and __self__.convertNER(sentence.ents[i].label_) in ['ORGANIZATION', 'PERSON'] and sentence.ents[i].text in entity_variations:
                         jsonSentence["subj_start"] = sentence.ents[i].start
                         jsonSentence["subj_end"] = sentence.ents[i].end - 1
                         jsonSentence["obj_start"] = sentence.ents[j].start
@@ -84,5 +91,5 @@ class Generator(object):
             json.dump(jsonifiedSentences, json_file)
 
 ## testing ##
-temp = Generator(text, 'dataset/generated_data/temp.json')
-temp.generate()
+generator = Generator(text, 'dataset/generated_data/temp.json')
+generator.generate()
