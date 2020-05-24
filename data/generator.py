@@ -70,15 +70,15 @@ class Generator(object):
                 jsonSentence["stanford_deprel"].append(word.dep_)
             for i in range(len(sentence.ents)):
                 for j in range(len(sentence.ents)):
-                    if i != j:
+                    # prevent self relations and relations where the subject is not an organization or person
+                    if i != j and __self__.convertNER(sentence.ents[i].label_) in ['ORGANIZATION', 'PERSON']:
                         jsonSentence["subj_start"] = sentence.ents[i].start
                         jsonSentence["subj_end"] = sentence.ents[i].end - 1
                         jsonSentence["obj_start"] = sentence.ents[j].start
                         jsonSentence["obj_end"] = sentence.ents[j].end - 1
                         jsonSentence["subj_type"] = __self__.convertNER(sentence.ents[i].label_)
                         jsonSentence["obj_type"] = __self__.convertNER(sentence.ents[j].label_)
-                        if jsonSentence['subj_type'] in ['OBJECT', 'PERSON']:
-                            jsonifiedSentences.append(copy.deepcopy(jsonSentence))
+                        jsonifiedSentences.append(copy.deepcopy(jsonSentence))
 
         with open(__self__.filename, 'w') as json_file:
             json.dump(jsonifiedSentences, json_file)
