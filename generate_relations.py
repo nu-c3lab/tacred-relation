@@ -60,14 +60,14 @@ for i, b in enumerate(batch):
     preds, probs = model.predictUnseen(b)
     predictions += preds
     all_probs += probs
-predictions = [id2label[p] for p in predictions]
+relations = ['(' + batch.entities[idx][0] + ' ' + id2label[predictions[idx]] + ' ' + batch.entities[idx][1] + ')' for idx in range(len(predictions))]
 
 # save probability scores
-#if len(args.out) > 0:
-#    helper.ensure_dir(os.path.dirname(args.out))
-#    with open(args.out, 'wb') as outfile:
-#        pickle.dump(all_probs, outfile)
-#    print("Prediction scores saved to {}.".format(args.out))
+if len(args.out) > 0:
+    helper.ensure_dir(os.path.dirname(args.out))
+    with open(args.out + '/out.txt', 'w') as outfile:
+        outfile.writelines("{}\n".format(relation) for relation in relations)
+    print("Predictions saved to {}.".format(args.out))
 
 print("Generation finished.")
 

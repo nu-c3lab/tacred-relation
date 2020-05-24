@@ -1,6 +1,7 @@
 import copy
 import json
 import spacy
+import unidecode
 
 # {
 #   "id": "098f6fb926eb676a14fd", "relation": "per:title",
@@ -19,8 +20,11 @@ text = ("Albert Einstein, (born March 14, 1879, Ulm, Württemberg, Germany—die
     "explanation of the photoelectric effect. Einstein is generally considered the most "
     "influential physicist of the 20th century.")
 
-text = "Youth minister and \"Street General\" Charles Ble Goude, who is under UN sanctions for \"acts of violence by street militias, including beatings, rapes and extrajudicial killings\", vows to fight for Ivory Coast's sovereignty."
-text = "Taiwan's Chunghwa Telecom Co plans to spend 129 billion New Taiwan dollars -LRB- US$ 397 billion; euro3 billion -RRB- over the next five years to upgrade its telecommunications networks and build a new undersea cable system, Chairman Ho Chen Tan said Wednesday."
+# convert unicode characters to ascii
+#text = unidecode.unidecode(text)
+
+#text = "Youth minister and \"Street General\" Charles Ble Goude, who is under UN sanctions for \"acts of violence by street militias, including beatings, rapes and extrajudicial killings\", vows to fight for Ivory Coast's sovereignty."
+#text = "Taiwan's Chunghwa Telecom Co plans to spend 129 billion New Taiwan dollars -LRB- US$ 397 billion; euro3 billion -RRB- over the next five years to upgrade its telecommunications networks and build a new undersea cable system, Chairman Ho Chen Tan said Wednesday."
 
 
 class Generator(object):
@@ -43,7 +47,10 @@ class Generator(object):
         parsed = nlp(__self__.text)
         jsonifiedSentences = []
 
-        for sentence in parsed.sents:
+        for raw_sentence in parsed.sents:
+            # reparsing sentence here so that the entity start and end positions are relative to
+            # the beginning of the sentence instead of the beginning of the entire text
+            sentence = nlp(raw_sentence.text)
             jsonSentence = {
             #    "id": "none",
                 "relation": "no_relation",

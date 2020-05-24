@@ -18,6 +18,7 @@ class DataLoader(object):
         self.opt = opt
         self.vocab = vocab
         self.eval = evaluation
+        self.entities = []
 
         with open(filename) as infile:
             data = json.load(infile)
@@ -28,7 +29,7 @@ class DataLoader(object):
             random.shuffle(indices)
             data = [data[i] for i in indices]
         id2label = dict([(v,k) for k,v in constant.LABEL_TO_ID.items()])
-        self.labels = [id2label[d[-1]] for d in data] 
+        self.labels = [id2label[d[-1]] for d in data]
         self.num_examples = len(data)
 
         # chunk into batches
@@ -43,6 +44,8 @@ class DataLoader(object):
             tokens = d['token']
             if opt['lower']:
                 tokens = [t.lower() for t in tokens]
+            self.entities.append((get_entity(tokens, d['subj_start'], d['subj_end']), \
+                                  get_entity(tokens, d['obj_start'], d['obj_end'])))
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
@@ -112,7 +115,10 @@ def map_to_ids(tokens, vocab):
 def get_positions(start_idx, end_idx, length):
     """ Get subj/obj position sequence. """
     return list(range(-start_idx, 0)) + [0]*(end_idx - start_idx + 1) + \
-            list(range(1, length-end_idx))
+        list(range(1, length-end_idx))
+
+def get_entity(tokens, start_idx, end_idx):
+    return '_'.join(tokens[start_idx:end_idx+1])
 
 def get_long_tensor(tokens_list, batch_size):
     """ Convert list of list of tokens to a padded LongTensor. """
