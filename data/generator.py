@@ -15,7 +15,18 @@ from preprocessing import preprocessing
 #   "stanford_deprel": ["compound", "nsubj", "cc", "punct", "compound", "compound", "punct", "compound", "compound", "conj", "punct", "nsubj", "cop", "case", "compound", "acl:relcl", "case", "punct", "nmod", "case", "nmod", "case", "compound", "nmod", "punct", "case", "nmod", "punct", "conj", "cc", "amod", "conj", "punct", "punct", "ROOT", "mark", "xcomp", "case", "compound", "nmod:poss", "case", "nmod", "punct"]
 # }
 nlp = spacy.load("en_core_web_sm")
-page = wikipedia.page("Albert Einstein")
+#page = wikipedia.page("Albert Einstein")
+#page = wikipedia.page("Nikola Tesla")
+#page = wikipedia.page("Isaac Newton")
+
+class temp(object):
+    def __init__ (self, text, title):
+        self.content = text
+        self.title = title
+
+with open('temp.txt', 'r') as file:
+    page = temp(file.read().replace('\n', ''), 'Albert Einstein')
+
 text = preprocessing(page)
 
 #text = ("Albert Einstein, (born March 14, 1879, Ulm, Württemberg, Germany—died April 18, 1955, "
@@ -73,21 +84,21 @@ class Generator(object):
                 jsonSentence["stanford_ner"].append(__self__.convertNER(word.ent_type_))
                 jsonSentence["stanford_head"].append(word.head.i + 1)
                 jsonSentence["stanford_deprel"].append(word.dep_)
-            for i in range(len(sentence.ents)):
-                if  sentence.ents[i].text in entity_variations:
-                    for j in range(len(sentence.ents)):
-                        # prevent self relations and relations where the subject is not an organization or person
-                        if i != j:
-                            jsonSentence["subj_start"] = sentence.ents[i].start
-                            jsonSentence["subj_end"] = sentence.ents[i].end - 1
-                            jsonSentence["obj_start"] = sentence.ents[j].start
-                            jsonSentence["obj_end"] = sentence.ents[j].end - 1
+            for subject in sentence.ents:
+                if  subject.text in entity_variations:
+                    for noun in sentence.ents: # sentence.noun_chunks:
+                        if subject.text != noun.text:
+                            jsonSentence["subj_start"] = subject.start
+                            jsonSentence["subj_end"] = subject.end - 1
+                            jsonSentence["obj_start"] = noun.start
+                            jsonSentence["obj_end"] = noun.end - 1
                             # TODO: We probably don't want to use entity extraction for comparing elements of the document
                             # i.e. spacy does not recognize "physicist" as an entity, and so the relationship
                             # (per:title Albert_Einstein Physisist) can never be extracted. As an alternative, it might be
                             # best to use noun chunk extraction or something similar.
-                            jsonSentence["subj_type"] = __self__.convertNER(sentence.ents[i].label_)
-                            jsonSentence["obj_type"] = __self__.convertNER(sentence.ents[j].label_)
+                            # Another option might be to traverse the spacy parse tree to get complete nouns
+                            jsonSentence["subj_type"] = __self__.convertNER(subject.label_)
+                            jsonSentence["obj_type"] = __self__.convertNER(noun.label_)
                             jsonifiedSentences.append(copy.deepcopy(jsonSentence))
 
         with open(__self__.filename, 'w') as json_file:
