@@ -1,5 +1,4 @@
 from pycorenlp import StanfordCoreNLP
-import wikipedia
 import re
 import gender_guesser.detector as gender
 
@@ -108,10 +107,10 @@ def preprocessing(page):
                 mention = mentions[j]
                 if mention['type'] == 'PRONOMINAL':
                     # get the attributes of the target mention in the corresponding sentence
-                    target_sentence = mention['sentNum']
+                    target_sentence = mention['sentNum'] - 1
                     target_token = mention['startIndex'] - 1
                     # transfer the antecedent's word form to the appropriate token in the sentence
-                    corenlp_output['sentences'][target_sentence - 1]['tokens'][target_token]['word'] = antecedent['text']
+                    corenlp_output['sentences'][target_sentence]['tokens'][target_token]['word'] = antecedent['text']
 
 
     def print_resolved(corenlp_output):
@@ -157,9 +156,9 @@ def preprocessing(page):
 
     new_resolved = re.sub(r'[.]+', "\\n", resolved_text)
 
-    with open("resolved.txt","w+") as f2:
-        f2.write(new_resolved)
+    # with open("resolved.txt","w+") as f2:
+    #     f2.write(new_resolved)
 
     return resolved_text
 
-preprocessed_text = preprocessing(wikipedia.page('Isaac Newton'))
+#preprocessed_text = preprocessing(wikipedia.page('Isaac Newton'))

@@ -3,6 +3,7 @@ import json
 import spacy
 import unidecode
 import wikipedia
+from preprocessing import preprocessing
 
 # {
 #   "id": "098f6fb926eb676a14fd", "relation": "per:title",
@@ -14,17 +15,14 @@ import wikipedia
 #   "stanford_deprel": ["compound", "nsubj", "cc", "punct", "compound", "compound", "punct", "compound", "compound", "conj", "punct", "nsubj", "cop", "case", "compound", "acl:relcl", "case", "punct", "nmod", "case", "nmod", "case", "compound", "nmod", "punct", "case", "nmod", "punct", "conj", "cc", "amod", "conj", "punct", "punct", "ROOT", "mark", "xcomp", "case", "compound", "nmod:poss", "case", "nmod", "punct"]
 # }
 nlp = spacy.load("en_core_web_sm")
-
 page = wikipedia.page("Albert Einstein")
+text = preprocessing(page)
 
 #text = ("Albert Einstein, (born March 14, 1879, Ulm, Württemberg, Germany—died April 18, 1955, "
 #    "Princeton, New Jersey, U.S.), German-born physicist who developed the special and "
 #    "general theories of relativity and won the Nobel Prize for Physics in 1921 for his "
 #    "explanation of the photoelectric effect. Einstein is generally considered the most "
 #    "influential physicist of the 20th century.")
-
-text = page.content.split('== References ==')[0]
-print(page.title)
 
 # convert unicode characters to ascii
 text = unidecode.unidecode(text)
@@ -52,6 +50,7 @@ class Generator(object):
     def generate(__self__):
         parsed = nlp(__self__.text)
         jsonifiedSentences = []
+        entity_variations = [page.title, *page.title.split()]
 
         for raw_sentence in parsed.sents:
             # reparsing sentence here so that the entity start and end positions are relative to
@@ -75,17 +74,21 @@ class Generator(object):
                 jsonSentence["stanford_head"].append(word.head.i + 1)
                 jsonSentence["stanford_deprel"].append(word.dep_)
             for i in range(len(sentence.ents)):
-                for j in range(len(sentence.ents)):
-                    # prevent self relations and relations where the subject is not an organization or person
-                    entity_variations = [page.title, *page.title.split()]
-                    if i != j and __self__.convertNER(sentence.ents[i].label_) in ['ORGANIZATION', 'PERSON'] and sentence.ents[i].text in entity_variations:
-                        jsonSentence["subj_start"] = sentence.ents[i].start
-                        jsonSentence["subj_end"] = sentence.ents[i].end - 1
-                        jsonSentence["obj_start"] = sentence.ents[j].start
-                        jsonSentence["obj_end"] = sentence.ents[j].end - 1
-                        jsonSentence["subj_type"] = __self__.convertNER(sentence.ents[i].label_)
-                        jsonSentence["obj_type"] = __self__.convertNER(sentence.ents[j].label_)
-                        jsonifiedSentences.append(copy.deepcopy(jsonSentence))
+                if  sentence.ents[i].text in entity_variations:
+                    for j in range(len(sentence.ents)):
+                        # prevent self relations and relations where the subject is not an organization or person
+                        if i != j:
+                            jsonSentence["subj_start"] = sentence.ents[i].start
+                            jsonSentence["subj_end"] = sentence.ents[i].end - 1
+                            jsonSentence["obj_start"] = sentence.ents[j].start
+                            jsonSentence["obj_end"] = sentence.ents[j].end - 1
+                            # TODO: We probably don't want to use entity extraction for comparing elements of the document
+                            # i.e. spacy does not recognize "physicist" as an entity, and so the relationship
+                            # (per:title Albert_Einstein Physisist) can never be extracted. As an alternative, it might be
+                            # best to use noun chunk extraction or something similar.
+                            jsonSentence["subj_type"] = __self__.convertNER(sentence.ents[i].label_)
+                            jsonSentence["obj_type"] = __self__.convertNER(sentence.ents[j].label_)
+                            jsonifiedSentences.append(copy.deepcopy(jsonSentence))
 
         with open(__self__.filename, 'w') as json_file:
             json.dump(jsonifiedSentences, json_file)
