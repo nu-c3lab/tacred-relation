@@ -129,7 +129,6 @@ def preprocessing(page):
         return all_text
 
     def article_cleanup(text):
-        text = page.content.split('== References ==')[0]
         text = re.sub(r'\((?:[^)(]|\((?:[^)(]|\([^)(]*\))*\))*\)', '', text)
         text = re.sub(r'\====[^)]*\====', '', text)
         text = re.sub(r'\===[^)]*\===', '', text)
@@ -146,6 +145,7 @@ def preprocessing(page):
         return resolved
     
 
+    # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 8000 -timeout 15000
     nlp = StanfordCoreNLP('http://localhost:8000')
     text = page.content.split('== References ==')[0]
     text = article_cleanup(text)
