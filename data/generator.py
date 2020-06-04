@@ -25,7 +25,10 @@ class temp(object):
         self.title = title
 
 with open('temp.txt', 'r') as file:
-    page = temp(file.read().replace('\n', ''), 'Albert Einstein')
+    page = temp(file.read().replace('\n', ' '), 'Albert Einstein')
+
+# convert unicode characters to ascii
+text = unidecode.unidecode(text)
 
 text = preprocessing(page)
 
@@ -34,9 +37,6 @@ text = preprocessing(page)
 #    "general theories of relativity and won the Nobel Prize for Physics in 1921 for his "
 #    "explanation of the photoelectric effect. Einstein is generally considered the most "
 #    "influential physicist of the 20th century.")
-
-# convert unicode characters to ascii
-text = unidecode.unidecode(text)
 
 #text = "Youth minister and \"Street General\" Charles Ble Goude, who is under UN sanctions for \"acts of violence by street militias, including beatings, rapes and extrajudicial killings\", vows to fight for Ivory Coast's sovereignty."
 #text = "Taiwan's Chunghwa Telecom Co plans to spend 129 billion New Taiwan dollars -LRB- US$ 397 billion; euro3 billion -RRB- over the next five years to upgrade its telecommunications networks and build a new undersea cable system, Chairman Ho Chen Tan said Wednesday."
@@ -87,7 +87,8 @@ class Generator(object):
             for subject in sentence.ents:
                 if  subject.text in entity_variations:
                     for noun in sentence.ents: # sentence.noun_chunks:
-                        if subject.text != noun.text:
+                        print(set(subject.text.split()).intersection(set(entity_variations)))
+                        if len(set(subject.text.split()).intersection(set(entity_variations))) == 0:
                             jsonSentence["subj_start"] = subject.start
                             jsonSentence["subj_end"] = subject.end - 1
                             jsonSentence["obj_start"] = noun.start
@@ -101,9 +102,10 @@ class Generator(object):
                             jsonSentence["obj_type"] = __self__.convertNER(noun.label_)
                             jsonifiedSentences.append(copy.deepcopy(jsonSentence))
 
+            
         with open(__self__.filename, 'w') as json_file:
             json.dump(jsonifiedSentences, json_file)
 
 ## testing ##
-generator = Generator(text, 'dataset/generated_data/temp.json')
+generator = Generator(text, 'dataset/generated_data/out.json')
 generator.generate()
