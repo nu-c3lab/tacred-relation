@@ -24,11 +24,11 @@ class temp(object):
         self.content = text
         self.title = title
 
-with open('temp.txt', 'r') as file:
-    page = temp(file.read().replace('\n', ' '), 'Albert Einstein')
+with open('GrahamBell.txt', 'r') as file:
+    page = temp(file.read().replace('\n', ' '), 'Alexander Graham Bell')
 
 # convert unicode characters to ascii
-text = unidecode.unidecode(text)
+text = unidecode.unidecode(page.content)
 
 text = preprocessing(page)
 
@@ -87,8 +87,8 @@ class Generator(object):
             for subject in sentence.ents:
                 if  subject.text in entity_variations:
                     for noun in sentence.ents: # sentence.noun_chunks:
-                        print(set(subject.text.split()).intersection(set(entity_variations)))
-                        if len(set(subject.text.split()).intersection(set(entity_variations))) == 0:
+                        # print(set(noun.text.split()).intersection(set(entity_variations)))
+                        if len(set(noun.text.split()).intersection(set(entity_variations))) == 0:
                             jsonSentence["subj_start"] = subject.start
                             jsonSentence["subj_end"] = subject.end - 1
                             jsonSentence["obj_start"] = noun.start
