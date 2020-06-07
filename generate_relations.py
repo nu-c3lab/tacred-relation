@@ -69,7 +69,7 @@ relations = ['(' + id2label[predictions[idx]] + ' ' + batch.entities[idx][0] + '
 # save probability scores
 if len(args.out) > 0:
     helper.ensure_dir(os.path.dirname(args.out))
-    with open(args.out + '/out_no_parantheses.txt', 'w') as outfile:
+    with open(args.out + '/GrahamBell.txt', 'w') as outfile:
         outfile.writelines("{}\n".format(relation) for relation in relations)
     print("Predictions saved to {}.".format(args.out))
 

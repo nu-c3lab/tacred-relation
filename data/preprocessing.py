@@ -60,7 +60,7 @@ def preprocessing(page):
 
 
     # java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 8000 -timeout 15000
-    nlp = StanfordCoreNLP('http://localhost:9000')
+    nlp = StanfordCoreNLP('http://localhost:8000')
     text = page.content.split('== References ==')[0]
     text = article_cleanup(text)
 
