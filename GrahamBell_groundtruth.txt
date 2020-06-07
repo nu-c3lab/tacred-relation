@@ -1,0 +1,25 @@
+per:age N/A
+per:alternate names N/A
+per:cause of death N/A
+per:charges N/A
+per:children Elsie, Marian
+per:cities of residence Edinburgh, London, Brantford, Boston, Northampton, Hartford, Baddeck
+per:city of birth Edinburgh
+per:city of death: Beinn Bhreagh (Baddeck)
+per:countries of residence Scotland, England, USA, Canada
+per:country of birth Scotland
+per:country of death Canada
+per:date of birth March 3, 1847
+per:date of death August 2, 1922
+per:employee of Boston School for Deaf Mutes, Clarke School for the Deaf, American School for Deaf, Bell Telephone Company, Volta Laboratory, Aerial Experiment Association, National Geographic Society
+per:origin N/A
+per:other family Gardiner Hubbard
+per:parents Alexander Melville Bell, Eliza Grace Symonds
+per:religion N/A
+per:schools attended Royal High School at Edinburgh, University College London
+per:siblings Edward, Melville
+per:spouse Mabel
+per:stateorprovince of birth N/A
+per:stateorprovince of death Nova Scotia
+per:stateorprovince of residence Ontario, Massachussetts, Connecticut, Nova Scotia
+per:title: inventor

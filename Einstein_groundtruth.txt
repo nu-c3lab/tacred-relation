@@ -1,0 +1,25 @@
+per:age N/A
+per:alternate names N/A
+per:cause of death aortic aneurysm
+per:charges N/A
+per:children Hans Albert, Eduard, Lieserl
+per:cities of residence Ulm, Princeton, Munich, Zurich, Aarau, Bern, ...
+per:city of birth Ulm
+per:city of death: Princeton
+per:countries of residence: Germany, Switzerland, USA
+per:country of birth: Germany
+per:country of death: USA
+per:date of birth: March 14, 1879
+per:date of death: April 18, 1955
+per:employee of: patent office, University of Berlin (Kaiser Wilmhelm), Institute for Advanced Study
+per:origin N/A
+per:other family Elsa Löwenthal
+per:parents Hermann, Pauline
+per:religion N/A
+per:schools attended  Eidgenössische Polytechnische Schule/Swiss Federal Polytechnic School
+per:siblings Maria
+per:spouse Elsa, Maric
+per:stateorprovince of birth: Württemberg
+per:stateorprovince of death: New Jersey
+per:stateorprovince of residence: New Jersey, Württemberg
+per:title: physicist, author
